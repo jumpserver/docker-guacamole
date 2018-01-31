@@ -43,12 +43,12 @@ RUN curl -SLO "https://sourceforge.net/projects/guacamole/files/current/source/g
 
 # Install guacamole-client and postgres auth adapter
 RUN rm -rf ${CATALINA_HOME}/webapps/ROOT \
-  && curl -SLo ${CATALINA_HOME}/webapps/ROOT.war "https://sourceforge.net/projects/guacamole/files/current/binary/guacamole-${GUAC_VER}.war" && \
-  curl -SLo /config/guacamole/extensions/guacamole-auth-jumpserver-${GUAC_VER}-incubating.jar "https://s3.cn-north-1.amazonaws.com.cn/tempfiles/guacamole-jumpserver/guacamole-auth-jumpserver-${GUAC_VER}-incubating.jar"
-
+  && curl -SLo ${CATALINA_HOME}/webapps/ROOT.war "https://sourceforge.net/projects/guacamole/files/current/binary/guacamole-${GUAC_VER}.war"
 
 ENV PATH=/usr/lib/postgresql/${PG_MAJOR}/bin:$PATH
 ENV GUACAMOLE_HOME=/config/guacamole
+RUN mkdir -p ${GUACAMOLE_HOME}/extensions && \
+    curl -SLo ${GUACAMOLE_HOME}/extensions/guacamole-auth-jumpserver-${GUAC_VER}-incubating.jar "https://s3.cn-north-1.amazonaws.com.cn/tempfiles/guacamole-jumpserver/guacamole-auth-jumpserver-${GUAC_VER}-incubating.jar"
 
 WORKDIR /config
 
