@@ -48,7 +48,7 @@ RUN rm -rf ${CATALINA_HOME}/webapps/ROOT \
 ENV PATH=/usr/lib/postgresql/${PG_MAJOR}/bin:$PATH
 ENV GUACAMOLE_HOME=/config/guacamole
 RUN mkdir -p ${GUACAMOLE_HOME}/extensions && \
-    curl -SLo ${GUACAMOLE_HOME}/extensions/guacamole-auth-jumpserver-${GUAC_VER}-incubating.jar "https://s3.cn-north-1.amazonaws.com.cn/tempfiles/guacamole-jumpserver/guacamole-auth-jumpserver-${GUAC_VER}-incubating.jar"
+    curl -SLo ${GUACAMOLE_HOME}/extensions/guacamole-auth-jumpserver-${GUAC_VER}.jar "https://s3.cn-north-1.amazonaws.com.cn/tempfiles/guacamole-jumpserver/guacamole-auth-jumpserver-${GUAC_VER}.jar"
 
 WORKDIR /config
 
