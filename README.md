@@ -1,4 +1,5 @@
-[![Docker Build Status](https://img.shields.io/docker/build/oznu/guacamole.svg?label=x64%20build&style=for-the-badge)](https://hub.docker.com/r/oznu/guacamole/) [![Travis](https://img.shields.io/travis/oznu/docker-guacamole.svg?label=arm%20build&style=for-the-badge)](https://travis-ci.org/oznu/docker-guacamole) [![Docker Pulls](https://img.shields.io/docker/pulls/oznu/guacamole.svg?style=for-the-badge)](https://hub.docker.com/r/oznu/guacamole/)
+[![Docker Build Status](https://img.shields.io/docker/build/jumpserver/guacamole.svg?style=for-the-badge)](https://hub.docker.com/r/jumpserver/guacamole/)
+[![Docker Pulls](https://img.shields.io/docker/pulls/jumpserver/guacamole.svg?style=for-the-badge)](https://hub.docker.com/r/jumpserver/guacamole/)
 
 # Docker Guacamole
 
