@@ -5,9 +5,10 @@ ENV ARCH=amd64 \
   GUACAMOLE_HOME=/app/guacamole
 
 # Apply the s6-overlay
+COPY s6-overlay-${ARCH}.tar.gz .
 
-RUN curl -SLO "https://github.com/just-containers/s6-overlay/releases/download/v1.20.0.0/s6-overlay-${ARCH}.tar.gz" \
-  && tar -xzf s6-overlay-${ARCH}.tar.gz -C / \
+#RUN curl -SLO "https://github.com/just-containers/s6-overlay/releases/download/v1.20.0.0/s6-overlay-${ARCH}.tar.gz" \
+RUN tar -xzf s6-overlay-${ARCH}.tar.gz -C / \
   && tar -xzf s6-overlay-${ARCH}.tar.gz -C /usr ./bin \
   && rm -rf s6-overlay-${ARCH}.tar.gz \
   && mkdir -p ${GUACAMOLE_HOME} \
@@ -31,8 +32,9 @@ RUN [ "$ARCH" = "armhf" ] && ln -s /usr/local/lib/freerdp /usr/lib/arm-linux-gnu
 RUN [ "$ARCH" = "amd64" ] && ln -s /usr/local/lib/freerdp /usr/lib/x86_64-linux-gnu/freerdp || exit 0
 
 # Install guacamole-server
-RUN curl -SLO "https://sourceforge.net/projects/guacamole/files/current/source/guacamole-server-${GUAC_VER}.tar.gz" \
-  && tar -xzf guacamole-server-${GUAC_VER}.tar.gz \
+COPY guacamole-server-${GUAC_VER}.tar.gz .
+# RUN curl -SLO "https://sourceforge.net/projects/guacamole/files/current/source/guacamole-server-${GUAC_VER}.tar.gz" \
+RUN tar -xzf guacamole-server-${GUAC_VER}.tar.gz \
   && cd guacamole-server-${GUAC_VER} \
   && ./configure \
   && make -j$(getconf _NPROCESSORS_ONLN) \
@@ -42,13 +44,15 @@ RUN curl -SLO "https://sourceforge.net/projects/guacamole/files/current/source/g
   && ldconfig
 
 # Install guacamole-client and postgres auth adapter
-RUN rm -rf ${CATALINA_HOME}/webapps/ROOT \
-  && curl -SLo ${CATALINA_HOME}/webapps/ROOT.war "https://sourceforge.net/projects/guacamole/files/current/binary/guacamole-${GUAC_VER}.war"
+RUN rm -rf ${CATALINA_HOME}/webapps/ROOT
+#  && curl -SLo ${CATALINA_HOME}/webapps/ROOT.war "https://sourceforge.net/projects/guacamole/files/current/binary/guacamole-${GUAC_VER}.war"
+COPY guacamole-${GUAC_VER}.war ${CATALINA_HOME}/webapps/ROOT.war
 
 ENV PATH=/usr/lib/postgresql/${PG_MAJOR}/bin:$PATH
 ENV GUACAMOLE_HOME=/config/guacamole
-RUN mkdir -p ${GUACAMOLE_HOME}/extensions && \
-    curl -SLo ${GUACAMOLE_HOME}/extensions/guacamole-auth-jumpserver-${GUAC_VER}.jar "https://s3.cn-north-1.amazonaws.com.cn/tempfiles/guacamole-jumpserver/guacamole-auth-jumpserver-${GUAC_VER}.jar"
+RUN mkdir -p ${GUACAMOLE_HOME}/extensions 
+# curl -SLo ${GUACAMOLE_HOME}/extensions/guacamole-auth-jumpserver-${GUAC_VER}.jar "https://s3.cn-north-1.amazonaws.com.cn/tempfiles/guacamole-jumpserver/guacamole-auth-jumpserver-${GUAC_VER}.jar"
+COPY gucamole-auth-jumpserver-${GUAC_VER}.jar ${GUACAMOLE_HOME}/extensions/guacamole-auth-jumpserver-${GUAC_VER}.jar
 
 WORKDIR /config
 
