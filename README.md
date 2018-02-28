@@ -16,3 +16,12 @@ docker run \
   jumpserver/guacamole
 ```
 
+## Nginx Configure
+
+please add the following configure in you nginx config.
+
+```
+location /guacamole/ {
+    proxy_pass http://<guacamole>:8080/;
+}
+```
