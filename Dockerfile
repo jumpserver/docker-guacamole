@@ -53,7 +53,9 @@ ENV GUACAMOLE_HOME=/config/guacamole
 RUN mkdir -p ${GUACAMOLE_HOME}/extensions 
 # curl -SLo ${GUACAMOLE_HOME}/extensions/guacamole-auth-jumpserver-${GUAC_VER}.jar "https://s3.cn-north-1.amazonaws.com.cn/tempfiles/guacamole-jumpserver/guacamole-auth-jumpserver-${GUAC_VER}.jar"
 COPY guacamole-auth-jumpserver-${GUAC_VER}.jar ${GUACAMOLE_HOME}/extensions/guacamole-auth-jumpserver-${GUAC_VER}.jar
-
+# Install ssh-forward for support 
+RUN curl -SLo /tmp/linux-amd64.tar.gz "https://github.com/ibuler/ssh-forward/releases/download/v0.0.1/linux-amd64.tar.gz" \
+  && tar xvf /tmp/linux-amd64.tar.gz -C /bin/ && chmod +x /bin/ssh-forward
 WORKDIR /config
 
 COPY root /
