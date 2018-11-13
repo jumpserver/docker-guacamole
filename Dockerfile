@@ -55,7 +55,7 @@ RUN mkdir -p ${GUACAMOLE_HOME}/extensions
 COPY guacamole-auth-jumpserver-${GUAC_VER}.jar ${GUACAMOLE_HOME}/extensions/guacamole-auth-jumpserver-${GUAC_VER}.jar
 
 # Install ssh-forward for support 
-RUN curl -SLo /tmp/linux-amd64.tar.gz "https://github.com/ibuler/ssh-forward/releases/download/v0.0.2/linux-amd64.tar.gz" \
+RUN curl -SLo /tmp/linux-amd64.tar.gz "https://github.com/ibuler/ssh-forward/releases/download/v0.0.5/linux-amd64.tar.gz" \
   && tar xvf /tmp/linux-amd64.tar.gz -C /bin/ && chmod +x /bin/ssh-forward
 WORKDIR /config
 
