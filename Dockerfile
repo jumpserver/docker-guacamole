@@ -1,4 +1,4 @@
-FROM library/tomcat:7-jre8
+FROM library/tomcat:9-jre8
 
 ENV ARCH=amd64 \
   GUAC_VER=1.0.0 \
@@ -33,7 +33,7 @@ RUN [ "$ARCH" = "amd64" ] && ln -s /usr/local/lib/freerdp /usr/lib/x86_64-linux-
 
 # Install guacamole-server
 COPY guacamole-server-${GUAC_VER}.tar.gz .
-# RUN curl -SLO "https://sourceforge.net/projects/guacamole/files/current/source/guacamole-server-${GUAC_VER}.tar.gz" \
+# RUN curl -SLO "http://apache.org/dyn/closer.cgi?action=download&filename=guacamole/${GUAC_VER}/source/guacamole-server-${GUAC_VER}.tar.gz" \
 RUN tar -xzf guacamole-server-${GUAC_VER}.tar.gz \
   && cd guacamole-server-${GUAC_VER} \
   && ./configure \
@@ -62,3 +62,5 @@ WORKDIR /config
 COPY root /
 
 ENTRYPOINT [ "/init" ]
+
+
