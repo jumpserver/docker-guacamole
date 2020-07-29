@@ -29,7 +29,7 @@ RUN apt-get update                         && \
     apt-get install -y $BUILD_DEPENDENCIES && \
     rm -rf /var/lib/apt/lists/*
 
-RUN curl -SLO "http://apache.org/dyn/closer.cgi?action=download&filename=guacamole/${GUACD_VER}/source/guacamole-server-${GUACD_VER}.tar.gz" && ls \
+RUN curl -SLO "http://download.jumpserver.org/public/guacamole-server-${GUACD_VER}.tar.gz" && ls \
   && tar -xzf guacamole-server-${GUACD_VER}.tar.gz && mkdir ${PREFIX_DIR} \
   && cp -r guacamole-server-${GUACD_VER}/src/guacd-docker/bin ${PREFIX_DIR}/bin/
 
@@ -75,7 +75,7 @@ RUN apt-get update                                                              
 RUN ${PREFIX_DIR}/bin/link-freerdp-plugins.sh \
         ${PREFIX_DIR}/lib/freerdp2/libguac*.so
 
-ADD https://github.com/just-containers/s6-overlay/releases/download/v2.0.0.1/s6-overlay-${ARCH}.tar.gz /tmp/
+ADD http://download.jumpserver.org/public/s6-overlay-${ARCH}.tar.gz /tmp/
 
 RUN tar -xzf /tmp/s6-overlay-${ARCH}.tar.gz -C / \ 
     && tar -xzf /tmp/s6-overlay-${ARCH}.tar.gz -C /usr ./bin \
@@ -88,7 +88,7 @@ RUN rm -rf ${CATALINA_HOME}/webapps/ROOT \
 
 COPY etc /etc/
 COPY guacamole.properties ${GUACAMOLE_HOME}/
-COPY ssh-forward.tar.gz /tmp/
+ADD http://download.jumpserver.org/public/ssh-forward.tar.gz /tmp/
 RUN tar xvf /tmp/ssh-forward.tar.gz -C /bin/ && chmod +x /bin/ssh-forward
 
 ADD http://download.jumpserver.org/release/${JMS_VERSION}/guacamole-client-${JMS_VERSION}.tar.gz /tmp/
