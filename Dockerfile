@@ -1,10 +1,17 @@
-FROM library/tomcat:9-jre8 AS builder
+ARG TOMCAT_VERSION=9
+ARG TOMCAT_JRE=jdk8-openjdk-buster
+FROM tomcat:${TOMCAT_VERSION}-${TOMCAT_JRE} AS builder
 
 ARG PREFIX_DIR=/usr/local/guacamole
-ARG GUACD_VER=1.2.0
+ARG GUACD_VER=1.3.0
 
-RUN curl -o /etc/apt/sources.list "https://mirrors.163.com/.help/sources.list.stretch"
+ARG DEBIAN_RELEASE=buster-backports
+RUN curl -o /etc/apt/sources.list "https://mirrors.163.com/.help/sources.list.buster" && \
+    grep " ${DEBIAN_RELEASE} " /etc/apt/sources.list || echo >> /etc/apt/sources.list \
+    "deb http://mirrors.163.com/debian/ ${DEBIAN_RELEASE} main contrib non-free"
 
+# Do not require interaction during build
+ARG DEBIAN_FRONTEND=noninteractive
 ARG BUILD_DEPENDENCIES="              \
         autoconf                      \
         automake                      \
@@ -26,7 +33,7 @@ ARG BUILD_DEPENDENCIES="              \
 
 # Bring build environment up to date and install build dependencies
 RUN apt-get update                         && \
-    apt-get install -y $BUILD_DEPENDENCIES && \
+    apt-get install -t ${DEBIAN_RELEASE} -y $BUILD_DEPENDENCIES && \
     rm -rf /var/lib/apt/lists/*
 
 RUN curl -SLO "http://download.jumpserver.org/public/guacamole-server-${GUACD_VER}.tar.gz" && ls \
@@ -38,10 +45,10 @@ RUN ${PREFIX_DIR}/bin/build-guacd.sh guacamole-server-${GUACD_VER} "$PREFIX_DIR"
 RUN ${PREFIX_DIR}/bin/list-dependencies.sh    \
         ${PREFIX_DIR}/sbin/guacd              \
         ${PREFIX_DIR}/lib/libguac-client-*.so \
-        ${PREFIX_DIR}/lib/freerdp2/guac*.so   \
+        ${PREFIX_DIR}/lib/freerdp2/*guac*.so   \
         > ${PREFIX_DIR}/DEPENDENCIES
 
-FROM library/tomcat:9-jre8
+FROM tomcat:${TOMCAT_VERSION}-${TOMCAT_JRE}
 ARG PREFIX_DIR=/usr/local/guacamole
 ARG VERSION=v2.2.0
 ENV JMS_VERSION=${VERSION}
@@ -63,12 +70,17 @@ ARG RUNTIME_DEPENDENCIES="            \
 
 COPY --from=builder ${PREFIX_DIR} ${PREFIX_DIR}
 
-RUN curl -o /etc/apt/sources.list "https://mirrors.163.com/.help/sources.list.stretch"
+ARG DEBIAN_RELEASE=buster-backports
+RUN curl -o /etc/apt/sources.list "https://mirrors.163.com/.help/sources.list.buster" && \
+    grep " ${DEBIAN_RELEASE} " /etc/apt/sources.list || echo >> /etc/apt/sources.list \
+    "deb http://mirrors.163.com/debian/ ${DEBIAN_RELEASE} main contrib non-free"
+# Do not require interaction during build
+ARG DEBIAN_FRONTEND=noninteractive
 
 # Bring runtime environment up to date and install runtime dependencies
 RUN apt-get update                                                                  && \
-    apt-get install -y --no-install-recommends $RUNTIME_DEPENDENCIES                && \
-    apt-get install -y --no-install-recommends $(cat "${PREFIX_DIR}"/DEPENDENCIES)  && \
+    apt-get install -t ${DEBIAN_RELEASE} -y --no-install-recommends $RUNTIME_DEPENDENCIES                && \
+    apt-get install -t ${DEBIAN_RELEASE} -y --no-install-recommends $(cat "${PREFIX_DIR}"/DEPENDENCIES)  && \
     rm -rf /var/lib/apt/lists/*
 
 # Link FreeRDP plugins into proper path
